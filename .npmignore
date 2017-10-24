@@ -1,3 +1,5 @@
+examples/
+
 # Logs
 logs
 *.log
@@ -58,4 +60,3 @@ typings/
 .env
 
 .vscode
-
