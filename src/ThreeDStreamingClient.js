@@ -1,5 +1,6 @@
 const validUrl = require('valid-url');
 const _ = require('lodash');
+const sdputils = require('./sdputils');
 
 //TODO: READD AUTH TOKEN
 class ThreeDStreamingClient {
@@ -365,23 +366,10 @@ class ThreeDStreamingClient {
 
     var receivedOffer = '';
     this.peerConnection.createOffer(offerOptions).then((offer) => {
-      if (this.platform === 'react-native') {
-        // This forces WebRTC to use H264 codec instead of VP8
-        offer.sdp = offer.sdp.replace('96 98 100 127 125', '125 98 100 127 96');
-        // Set local description
-        this.peerConnection.setLocalDescription(offer);
-        receivedOffer = offer;
-      }
-      else {
-        let offerMsg = JSON.stringify(offer);
-        // This forces WebRTC to use H264 codec instead of VP8
-        // https://stackoverflow.com/questions/26924430/how-can-i-change-the-default-codec-used-in-webrtc
-        offerMsg = offerMsg.replace('96 98 100 102', '100 96 98 102');
-        // Re-create the new offer object
-        receivedOffer = JSON.parse(offerMsg);
-        // Set local description
-        this.peerConnection.setLocalDescription(receivedOffer);
-      }
+      offer.sdp = sdputils.maybePreferCodec(offer.sdp, 'video', 'receive', "H264");
+      // Set local description
+      this.peerConnection.setLocalDescription(offer);
+      receivedOffer = offer;
     }).then(() => {
       // Send offer to signaling server
       this.sendToPeer(peer_id, JSON.stringify(receivedOffer));

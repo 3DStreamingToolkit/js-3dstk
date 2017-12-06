@@ -126,12 +126,7 @@ $(function(){
         var list = document.getElementById('peerList');
         var peerName = list.value;
 
-        var pc = streamingClient.joinPeer(streamingClient.getPeerIdByName(peerName), {
-          onaddstream: onRemoteStreamAdded,
-          onremovestream: onRemoteStreamRemoved,
-          onopen: onSessionOpened,
-          onconnecting: onSessionConnecting
-        });
+        var pc = streamingClient.joinPeer(streamingClient.getPeerIdByName(peerName));
 
     } catch (e) {
         trace('error ' + e.description);
@@ -256,8 +251,14 @@ $(function(){
           getUserMedia: navigator.mozGetUserMedia || navigator.webkitGetUserMedia
         });
 
-        streamingClient.signIn(localName)
-          .then(updatePeerList)
+        streamingClient.signIn(localName, 
+        {
+          onaddstream: onRemoteStreamAdded.bind(this),
+          onremovestream: onRemoteStreamRemoved,
+          onopen: onSessionOpened,
+          onconnecting: onSessionConnecting,
+          onupdatepeers: updatePeerList.bind(this)
+        })
           .then(streamingClient.startHeartbeat.bind(streamingClient))
           .then(streamingClient.pollSignalingServer.bind(streamingClient, true));
     }
