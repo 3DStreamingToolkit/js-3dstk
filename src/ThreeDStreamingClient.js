@@ -22,6 +22,8 @@ class ThreeDStreamingClient {
     this.WebRTC = WebRTC;
 
     this.myId = -1;
+    this.activePeerId = null;
+    this.signalingConnected = false;
     this.otherPeers = {};
     this.heartBeatIntervalId = null;
     this.peerConnection = null;
@@ -29,12 +31,13 @@ class ThreeDStreamingClient {
     this.repeatLongPoll = false;
     this.onconnecting = null;
     this.onopen = null;
+    this.onclose = null;
     this.onaddstream = null;
     this.onremovestream = null;
     this.onupdatepeers = null;
   }
 
-  signIn(peerName, {onconnecting = null, onopen = null, onaddstream = null, onremovestream = null, onupdatepeers = null}) {
+  signIn(peerName, {onconnecting = null, onopen = null, onclose=null, onaddstream = null, onremovestream = null, onupdatepeers = null}) {
     // First part of the hand shake
     const fetchOptions = {
       method: 'GET',
@@ -45,6 +48,7 @@ class ThreeDStreamingClient {
 
     this.onconnecting = onconnecting;
     this.onopen = onopen;
+    this.onclose = onclose;
     this.onaddstream = onaddstream;
     this.onremovestream = onremovestream;
     this.onupdatepeers = onupdatepeers;
@@ -66,6 +70,7 @@ class ThreeDStreamingClient {
         }
 
         this.onupdatepeers();
+        this.signalingConnected = true;
       });
   }
 
@@ -74,12 +79,37 @@ class ThreeDStreamingClient {
     this.repeatLongPoll = false;
 
     if (this.myId !== -1) {
+      //Tell the other peer we are hanging up
+      if(this.peerConnection !== null && 
+        this.peerConnection.iceConnectionState == "connected") {
+          this.disconnectFromCurrentPeer();
+      } else {
+          this.disconnectFromServer();
+      }
+    }
+  }
+
+  //TODO: This is still broken and needs further debugging
+  disconnectFromCurrentPeer() {
+    if(this.peerConnection !== null && 
+       this.peerConnection.iceConnectionState == "connected" &&
+       this.activePeerId !== null){
+      //Tell the other peer goodbye
+      this.sendToPeer(this.activePeerId,"BYE");
+    } 
+    return true;
+  }
+
+  disconnectFromServer() {
+    if(this.signalingConnected == true) {
+      //If not actively streaming, then just sign out
       fetch(`${this.serverUrl}/sign_out?peer_id=${this.myId}`, {
         method: 'GET',
         headers: {
           'Peer-Type': 'Client'
         }
       });
+      this.signalingConnected = false;
     }
   }
 
@@ -299,6 +329,7 @@ class ThreeDStreamingClient {
       this.peerConnection.onopen = this.onopen;
       this.peerConnection.onaddstream = this.onaddstream;
       this.peerConnection.onremovestream = this.onremovestream;
+      this.peerConnection.onclose = this.onclose;
 
       this.peerConnection.ondatachannel = (ev) => {
         this.inputChannel = ev.channel;
@@ -306,6 +337,7 @@ class ThreeDStreamingClient {
         this.inputChannel.onclose = this._handleSendChannelClose;
       };
       console.log('Created RTCPeerConnnection with config: ' + JSON.stringify(this.pcConfig));
+      this.activePeerId = peer_id; 
       return this.peerConnection;
     }
     catch (e) {
@@ -336,7 +368,7 @@ class ThreeDStreamingClient {
       },
       body: data
     };
-    return fetch(`${this.serverUrl}/message?peer_id=${this.myId}&to=${peer_id}`, fetchOptions).catch((reason) => {console.error(reason);});
+    return fetch(`${this.serverUrl}/message?peer_id=${this.myId}&to=${peer_id}`, fetchOptions).catch((reason) => {console.error("Testing"+reason);});
   }
 
   _handleSendChannelOpen() {
