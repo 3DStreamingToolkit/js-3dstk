@@ -33,6 +33,7 @@ $(function(){
   };
 
   var streamingClient;
+  var remoteVideoElement = null;
 
   var navTransform = matCreate();
   var navHeading = 0.0;
@@ -58,7 +59,6 @@ $(function(){
         'OfferToReceiveVideo': true
     }
   };
-  var remoteStream;
   var accessToken;
 
   var pcConfig = pcConfigStatic;
@@ -115,7 +115,8 @@ $(function(){
 
   function onRemoteStreamAdded(event) {
     console.log('Remote stream added:', URL.createObjectURL(event.stream));
-    var remoteVideoElement = document.getElementById('remote-video');
+    document.getElementById('renderers').style.display = 'none';
+    remoteVideoElement = document.getElementById('remote-video');
     remoteVideoElement.src = URL.createObjectURL(event.stream);
     remoteVideoElement.play();
   }
@@ -126,12 +127,7 @@ $(function(){
         var list = document.getElementById('peerList');
         var peerName = list.value;
 
-        var pc = streamingClient.joinPeer(streamingClient.getPeerIdByName(peerName), {
-          onaddstream: onRemoteStreamAdded,
-          onremovestream: onRemoteStreamRemoved,
-          onopen: onSessionOpened,
-          onconnecting: onSessionConnecting
-        });
+        var pc = streamingClient.joinPeer(streamingClient.getPeerIdByName(peerName));
 
     } catch (e) {
         trace('error ' + e.description);
@@ -256,8 +252,15 @@ $(function(){
           getUserMedia: navigator.mozGetUserMedia || navigator.webkitGetUserMedia
         });
 
-        streamingClient.signIn(localName)
-          .then(updatePeerList)
+        streamingClient.signIn(localName, 
+        {
+          onaddstream: onRemoteStreamAdded.bind(this),
+          onremovestream: onRemoteStreamRemoved,
+          onopen: onSessionOpened,
+          onclose: onSessionClosed,
+          onconnecting: onSessionConnecting,
+          onupdatepeers: updatePeerList.bind(this)
+        })
           .then(streamingClient.startHeartbeat.bind(streamingClient))
           .then(streamingClient.pollSignalingServer.bind(streamingClient, true));
     }
@@ -266,7 +269,9 @@ $(function(){
   function disconnect()
   {
     streamingClient.disconnect();
-
+    if(remoteVideoElement !== null) {
+      remoteVideoElement.src = null;
+    }
     document.getElementById('connect').style.display = 'block';
     document.getElementById('cred').style.display = 'block';
     document.getElementById('disconnect').style.display = 'none';
@@ -326,7 +331,15 @@ $(function(){
     console.log('Session opened.');
   }
 
+  function onSessionClosed(message) {
+    remoteVideoElement.stop();
+    remoteVideoElement.src = null;
+    console.log('Session closed.');
+  }
+
   function onRemoteStreamRemoved(event) {
+    remoteVideoElement.stop();
+    remoteVideoElement.src = null;
     console.log('Remote stream removed.');
   }
 
