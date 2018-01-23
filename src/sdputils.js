@@ -259,14 +259,13 @@
      // If the codec is available, set it as the default in m line.
      var payload = null;
      for (var i = 0; i < sdpLines.length; i++) {
-      var index = findLineInRange(sdpLines, i, -1, 'a=rtpmap', codec);
-      if(index !== null) {
-        payload = getCodecPayloadTypeFromLine(sdpLines[index])
-        if (payload) {
-          sdpLines[mLineIndex] = setDefaultCodec(sdpLines[mLineIndex], payload);
-          i = index++;
-        }
-      }
+       var index = findLineInRange(sdpLines, i, -1, 'a=rtpmap', codec);
+       if(index !== null) {
+         payload = getCodecPayloadTypeFromLine(sdpLines[index]);
+         if (payload) {
+           sdpLines[mLineIndex] = setDefaultCodec(sdpLines[mLineIndex], payload);
+         }
+       }
      }
      
      sdp = sdpLines.join('\r\n');
