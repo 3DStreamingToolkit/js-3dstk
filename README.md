@@ -38,17 +38,20 @@ var streamingClient = new ThreeDToolkit.ThreeDStreamingClient({
     RTCIceCandidate: window.mozRTCIceCandidate || window.RTCIceCandidate || RTCIceCandidate
 });
 
-streamingClient.signIn(localName)
-    .then(streamingClient.startHeartbeat.bind(streamingClient))
-    .then(streamingClient.pollSignalingServer.bind(streamingClient, true));
+streamingClient.signIn(localName, 
+{
+  onaddstream: onRemoteStreamAdded.bind(this),
+  onremovestream: onRemoteStreamRemoved,
+  onopen: onSessionOpened,
+  onclose: onSessionClosed,
+  onconnecting: onSessionConnecting,
+  onupdatepeers: updatePeerList.bind(this)
+})
+.then(streamingClient.startHeartbeat.bind(streamingClient))
+.then(streamingClient.pollSignalingServer.bind(streamingClient, true));
 
 // Join a peer
-streamingClient.joinPeer(streamingClient.getPeerIdByName(peerName), {
-    onaddstream: onRemoteStreamAdded,
-    onremovestream: onRemoteStreamRemoved,
-    onopen: onSessionOpened,
-    onconnecting: onSessionConnecting
-});
+streamingClient.joinPeer(streamingClient.getPeerIdByName(peerName));
 ```
 
 ### Getting Started on Node.js and React-Native
@@ -56,7 +59,7 @@ streamingClient.joinPeer(streamingClient.getPeerIdByName(peerName), {
 For Node.js, simply replace how you import the client class.
 
 ```js
-const { ThreeDStreamingClient } = require('3dtoolkit');
+const { ThreeDStreamingClient } = require('js-3dtoolkit');
 
 var streamingClient = new ThreeDStreamingClient(...);
 ```
