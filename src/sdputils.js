@@ -480,25 +480,39 @@
    
    // Find the line in sdpLines[startLine...endLine - 1] that starts with |prefix|
    // and, if specified, contains |substr| (case-insensitive search).
-   function findLineInRange(sdpLines, startLine, endLine, prefix, substr, direction = "asc") {
-     var realEndLine = endLine !== -1 ? endLine : sdpLines.length;
-     if (direction == "asc") {
+   function findLineInRange(
+     sdpLines,
+     startLine,
+     endLine,
+     prefix,
+     substr,
+     direction
+   ) {
+     if (direction === undefined) {
+       direction = 'asc';
+     }
+
+     direction = direction || 'asc';
+
+     if (direction === 'asc') {
        // Search beginning to end
+       var realEndLine = endLine !== -1 ? endLine : sdpLines.length;
        for (var i = startLine; i < realEndLine; ++i) {
          if (sdpLines[i].indexOf(prefix) === 0) {
            if (!substr ||
-               sdpLines[i].toLowerCase().indexOf(substr.toLowerCase()) !== -1) {
+             sdpLines[i].toLowerCase().indexOf(substr.toLowerCase()) !== -1) {
              return i;
            }
          }
        }
      } else {
        // Search end to beginning
-       for (var i = startLine; i >= realEndLine; --i) {
-         if (sdpLines[i].indexOf(prefix) === 0) {
+       var realStartLine = startLine !== -1 ? startLine : sdpLines.length-1;
+       for (var j = realStartLine; j >= 0; --j) {
+         if (sdpLines[j].indexOf(prefix) === 0) {
            if (!substr ||
-               sdpLines[i].toLowerCase().indexOf(substr.toLowerCase()) !== -1) {
-             return i;
+               sdpLines[j].toLowerCase().indexOf(substr.toLowerCase()) !== -1) {
+             return j;
            }
          }
        }
