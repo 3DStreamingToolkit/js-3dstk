@@ -37,7 +37,7 @@ class ThreeDStreamingClient {
     this.onupdatepeers = null;
   }
 
-  signIn(peerName, {onconnecting = null, onopen = null, onclose=null, onaddstream = null, onremovestream = null, onupdatepeers = null}) {
+  signIn(peerName, {onconnecting = null, onopen = null, onclose = null, onaddstream = null, onremovestream = null, onupdatepeers = null}) {
     // First part of the hand shake
     const fetchOptions = {
       method: 'GET',
@@ -68,8 +68,9 @@ class ThreeDStreamingClient {
 
           }
         }
-
-        this.onupdatepeers();
+        if (_.isFunction(this.onupdatepeers)) {
+          this.onupdatepeers();
+        }
         this.signalingConnected = true;
       });
   }
@@ -80,7 +81,7 @@ class ThreeDStreamingClient {
 
     if (this.myId !== -1) {
       //Tell the other peer we are hanging up
-      if(this.peerConnection !== null && 
+      if(this.peerConnection !== null &&
         this.peerConnection.iceConnectionState == "connected") {
           this.disconnectFromCurrentPeer();
       } else {
@@ -91,12 +92,12 @@ class ThreeDStreamingClient {
 
   //TODO: This is still broken and needs further debugging
   disconnectFromCurrentPeer() {
-    if(this.peerConnection !== null && 
+    if(this.peerConnection !== null &&
        this.peerConnection.iceConnectionState == "connected" &&
        this.activePeerId !== null){
       //Tell the other peer goodbye
       this.sendToPeer(this.activePeerId,"BYE");
-    } 
+    }
     return true;
   }
 
@@ -219,7 +220,9 @@ class ThreeDStreamingClient {
       this.otherPeers[parseInt(parsed[1], 10)] = parsed[0];
     }
 
-    this.onupdatepeers();
+    if (_.isFunction(this.onupdatepeers)) {
+      this.onupdatepeers();
+    }
   }
 
   // PRIVATE
@@ -325,11 +328,22 @@ class ThreeDStreamingClient {
           console.log('End of candidates.');
         }
       };
-      this.peerConnection.onconnecting = this.onconnecting;
-      this.peerConnection.onopen = this.onopen;
-      this.peerConnection.onaddstream = this.onaddstream;
-      this.peerConnection.onremovestream = this.onremovestream;
-      this.peerConnection.onclose = this.onclose;
+      // Only replace builtin function if we are passed an event handler.
+      if (_.isFunction(this.onconnecting)) {
+        this.peerConnection.onconnecting = this.onconnecting;
+      }
+      if (_.isFunction(this.onopen)) {
+        this.peerConnection.onopen = this.onopen;
+      }
+      if (_.isFunction(this.onaddstream)) {
+        this.peerConnection.onaddstream = this.onaddstream;
+      }
+      if (_.isFunction(this.onremovestream)) {
+        this.peerConnection.onremovestream = this.onremovestream;
+      }
+      if (_.isFunction(this.onclose)) {
+        this.peerConnection.onclose = this.onclose;
+      }
 
       this.peerConnection.ondatachannel = (ev) => {
         this.inputChannel = ev.channel;
@@ -337,7 +351,7 @@ class ThreeDStreamingClient {
         this.inputChannel.onclose = this._handleSendChannelClose;
       };
       console.log('Created RTCPeerConnnection with config: ' + JSON.stringify(this.pcConfig));
-      this.activePeerId = peer_id; 
+      this.activePeerId = peer_id;
       return this.peerConnection;
     }
     catch (e) {

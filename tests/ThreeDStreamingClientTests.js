@@ -115,7 +115,7 @@ test('Test SignIn', function(t) {
   setupMockFetch();
 
   const client = new ThreeDStreamingClient(serverConfig, MockWebRTC);
-  client.signIn('TEST').then(() => {
+  client.signIn('TEST', {}).then(() => {
     t.equal(client.myId, 1);
     t.deepEqual(client.otherPeers, {905: 'renderingserver_phcherne@PHCHERNE-PR04'});
 
@@ -129,7 +129,7 @@ test('Test Hanging Get', function(t){
   setupMockFetch();
 
   const client = new ThreeDStreamingClient(serverConfig, MockWebRTC);
-  client.signIn('TEST').then(() => {
+  client.signIn('TEST', {}).then(() => {
     t.equal(client.myId, 1);
     client.pollSignalingServer(false);
     t.end();
