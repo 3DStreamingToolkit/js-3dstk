@@ -8,6 +8,7 @@ module.exports = merge(common, {
     contentBase: './examples/browser',
     hot: true
   },
+  mode: 'development',
   plugins: [
     new webpack.HotModuleReplacementPlugin()
   ],
