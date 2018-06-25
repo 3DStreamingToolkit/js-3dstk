@@ -4,6 +4,11 @@ $(function(){
 
   var parseTurnFromOffer = true;
 
+  var pcConfigNone = {
+    'iceServers': [],
+    'iceTransportPolicy': 'relay'
+  }
+
   var pcConfigStatic = {
     'iceServers': [{
         'urls': 'turn server goes here',
@@ -63,7 +68,7 @@ $(function(){
   };
   var accessToken;
 
-  var pcConfig = parseTurnFromOffer ? [] : pcConfigStatic;
+  var pcConfig = parseTurnFromOffer ? pcConfigNone : pcConfigStatic;
 
   RTCPeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection || RTCPeerConnection;
   RTCSessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription || RTCSessionDescription;

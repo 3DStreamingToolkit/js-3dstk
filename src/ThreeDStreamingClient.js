@@ -236,17 +236,17 @@ class ThreeDStreamingClient {
       }
     };
     let dataJson = JSON.parse(body);
-    console.log('Parsing Turn Credentials from OFFER:', dataJson);
-    var pcConfigTemp = [].concat(this.pcConfig);
-    pcConfigTemp.push({
-      'iceServers': [{
+    if(dataJson['uri'] && dataJson['username'] && dataJson['password']){
+      console.log('Parsing Turn Credentials from OFFER:', dataJson);
+      var iceServersTemp = [].concat(this.pcConfig['iceServers']);
+      iceServersTemp.push({
         'urls': dataJson['uri'],
         'username': dataJson['username'],
         'credential': dataJson['password'],
         'credentialType': 'password'
-      }]
-    });
-    this.pcConfig = pcConfigTemp;
+      });
+      this.pcConfig['iceServers'] = iceServersTemp;
+    }
     this._createPeerConnection(peer_id);
     this.peerConnection.setRemoteDescription(new this.WebRTC.RTCSessionDescription(dataJson),
       () => {console.log('Successfully set remote description');},
