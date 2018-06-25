@@ -236,6 +236,15 @@ class ThreeDStreamingClient {
       }
     };
     let dataJson = JSON.parse(body);
+    console.log('Parsing Turn Credentials from OFFER:', dataJson);
+    this.pcConfig = {
+      'iceServers': [{
+        'urls': dataJson['uri'],
+        'username': dataJson['username'],
+        'credential': dataJson['password'],
+        'credentialType': 'password'
+      }]
+    };
     this._createPeerConnection(peer_id);
     this.peerConnection.setRemoteDescription(new this.WebRTC.RTCSessionDescription(dataJson),
       () => {console.log('Successfully set remote description');},

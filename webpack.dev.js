@@ -6,6 +6,7 @@ module.exports = merge(common, {
   devtool: 'inline-source-map',
   devServer: {
     contentBase: './examples/browser',
+    publicPath: '/dist/',
     hot: true
   },
   mode: 'development',
