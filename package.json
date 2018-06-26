@@ -1,6 +1,6 @@
 {
   "name": "js-3dstk",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Universal JavaScript Client for the 3D Streaming Toolkit - Supports Node.js, Browser and React-Native.",
   "main": "src/index.js",
   "scripts": {
