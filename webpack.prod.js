@@ -5,7 +5,7 @@ const path = require('path');
 
 module.exports = merge(common, {
   output: {
-    filename: 'js-3dtoolkit.min.js',
+    filename: 'js-3dstk.min.js',
     path: path.resolve(__dirname, 'dist')
   },
   plugins: [
