@@ -5,9 +5,11 @@ const common = require('./webpack.common.js');
 module.exports = merge(common, {
   devtool: 'inline-source-map',
   devServer: {
-    contentBase: './example',
+    contentBase: './examples/browser',
+    publicPath: '/dist/',
     hot: true
   },
+  mode: 'development',
   plugins: [
     new webpack.HotModuleReplacementPlugin()
   ],

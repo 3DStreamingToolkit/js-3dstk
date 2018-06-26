@@ -2,6 +2,13 @@ $(function(){
 
   URL = window.webkitURL || window.URL;
 
+  var parseTurnFromOffer = true;
+
+  var pcConfigNone = {
+    'iceServers': [],
+    'iceTransportPolicy': 'relay'
+  }
+
   var pcConfigStatic = {
     'iceServers': [{
         'urls': 'turn server goes here',
@@ -61,7 +68,7 @@ $(function(){
   };
   var accessToken;
 
-  var pcConfig = pcConfigStatic;
+  var pcConfig = parseTurnFromOffer ? pcConfigNone : pcConfigStatic;
 
   RTCPeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection || RTCPeerConnection;
   RTCSessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription || RTCSessionDescription;
@@ -244,7 +251,7 @@ $(function(){
 
         streamingClient = new ThreeDToolkit.ThreeDStreamingClient({
           'serverUrl': server,
-          'peerConnectionConfig': pcConfigStatic
+          'peerConnectionConfig': pcConfig
         }, {
           RTCPeerConnection: window.mozRTCPeerConnection || window.webkitRTCPeerConnection,
           RTCSessionDescription: window.mozRTCSessionDescription || window.RTCSessionDescription,
