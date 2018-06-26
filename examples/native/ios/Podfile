@@ -1,1 +1,0 @@
-pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'

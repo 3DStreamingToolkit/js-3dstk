@@ -1,14 +1,14 @@
-# js-3dtoolkit
+# js-3dstk
 Universal JavaScript Client for the 3D Streaming Toolkit - Supports Node.js, Browser and React-Native.
 
 ## Installation
 
-This is the Universal JavaScript module for the [3dtoolkit](https://github.com/catalystcode/3dtoolkit) project which allows you to build powerful stereoscopic 3D experiences that run on the cloud and stream to devices. You can use this JavaScript module on Node.js, the browser and React-Native.
+This is the Universal JavaScript module for the [3DStreamingToolkit](https://github.com/CatalystCode/3DStreamingToolkit) project which allows you to build powerful stereoscopic 3D experiences that run on the cloud and stream to devices. You can use this JavaScript module on Node.js, the browser and React-Native.
 
 To install for Node.js or React-Native, installation is done using the `npm install` command.
 
 ```bash
-$ npm install js-3dtoolkit
+$ npm install js-3dstk
 ```
 
 
@@ -59,7 +59,7 @@ streamingClient.joinPeer(streamingClient.getPeerIdByName(peerName));
 For Node.js, simply replace how you import the client class.
 
 ```js
-const { ThreeDStreamingClient } = require('js-3dtoolkit');
+const { ThreeDStreamingClient } = require('js-3dstk');
 
 var streamingClient = new ThreeDStreamingClient(...);
 ```

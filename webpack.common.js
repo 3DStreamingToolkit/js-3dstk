@@ -6,9 +6,9 @@ const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: 'js-3dtoolkit.js',
+    filename: 'js-3dstk.js',
     path: path.resolve(__dirname, 'dist'),
-    library: 'ThreeDToolkit'
+    library: 'ThreeDSTK'
   },
 
   plugins: [

@@ -1,6 +1,6 @@
 {
-  "name": "js-3dtoolkit",
-  "version": "1.1.0",
+  "name": "js-3dstk",
+  "version": "1.2.0",
   "description": "Universal JavaScript Client for the 3D Streaming Toolkit - Supports Node.js, Browser and React-Native.",
   "main": "src/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CatalystCode/js-3dtoolkit.git"
+    "url": "git+https://github.com/3DStreamingToolkit/js-3dstk.git"
   },
   "keywords": [
     "3d",
@@ -24,9 +24,9 @@
   "author": "Rami Sayar <rami.sayar@microsoft.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/CatalystCode/js-3dtoolkit/issues"
+    "url": "https://github.com/3DStreamingToolkit/js-3dstk/issues"
   },
-  "homepage": "https://github.com/CatalystCode/js-3dtoolkit#readme",
+  "homepage": "https://github.com/3DStreamingToolkit/js-3dstk#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
